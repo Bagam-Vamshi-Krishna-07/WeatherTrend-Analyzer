@@ -2,6 +2,8 @@ import requests
 from datetime import datetime, timedelta
 import pandas as pd
 import matplotlib.pyplot as plt
+import os
+
 def get_latitude_longitude(location):
     geo_api = f"https://geocoding-api.open-meteo.com/v1/search?name={location}&count=1"
     geo_response = requests.get(geo_api)
@@ -46,20 +48,24 @@ def get_past_n_days_max_min_temperature(latitude, longitude, days):
 
 def json_to_dataframe(data):
     df = pd.DataFrame({
-        'data': data['time'],
-        'max_temperature': data['temperature_2m_max'],
-        'min_temperature': data['temperature_2m_min']
+        'date': data['time'],
+        'max_temp': data['temperature_2m_max'],
+        'min_temp': data['temperature_2m_min']
     })
 
     # Convert date strings to datetime
     df['date'] = pd.to_datetime(df['date'])
     return df
 
-def 
-    # Create the plot
+def create_plot(df): 
+    # 3. Calculate average
+    df['avg_temp'] = (df['max_temp'] + df['min_temp']) / 2
+
+    # 4. Create visualization
     plt.figure(figsize=(10, 6))
-    plt.plot(df['date'], df['max_temp'], marker='o', label='Max Temp')
-    plt.plot(df['date'], df['min_temp'], marker='o', label='Min Temp')
+    plt.plot(df['date'], df['max_temp'], 'r-o', label='Max')
+    plt.plot(df['date'], df['min_temp'], 'b-o', label='Min')
+    plt.plot(df['date'], df['avg_temp'], 'g--', label='Average')
 
     # Add labels and title
     plt.xlabel('Date')
@@ -71,14 +77,19 @@ def
     plt.xticks(rotation=45)
     plt.tight_layout()
 
+def save(location):
+    if not os.path.exists('data'):
+        os.makedirs('data')
 
-location = "Vijayawada"
+    plt.savefig(f'data/{location}_weather_chart.png')
+    df.to_csv(f'data/{location}_weather.csv', index=False)
+
+location = "Khammam"#input("Enter City: ")
 latitude, longitude = get_latitude_longitude(location)
 curr_temperature = get_temperature(latitude,longitude)
-data = get_past_n_days_max_min_temperature(latitude,longitude, 7)
-df = json_to_tablular(data)
-
-#--------------------------------
-#Get Past n - days temperatures
+data = get_past_n_days_max_min_temperature(latitude,longitude, 30)
+df = json_to_dataframe(data)
+create_plot(df)
+save(location)
 
 
