@@ -148,7 +148,7 @@ WeatherTrend-Analyzer/
 
 ⚙️ Installation & Setup
 1️⃣ Clone the Repository
-git clone https://github.com/your-username/WeatherTrend-Analyzer.git
+git clone [https://github.com/your-username/WeatherTrend-Analyzer.git](https://github.com/Bagam-Vamshi-Krishna-07/WeatherTrend-Analyzer)
 cd WeatherTrend-Analyzer
 
 2️⃣ Create a Virtual Environment (Optional but Recommended)
